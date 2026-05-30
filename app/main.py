@@ -1,23 +1,37 @@
 from fastapi import FastAPI,WebSocket,WebSocketDisconnect
 from fastapi.responses import HTMLResponse
-from redis import Redis
+from app.redis.client import redis_client
+from redis.asyncio import Redis
 import json
+import asyncio
 from app.websocket.manager import ConnectionManager
-from app.pubsub import start_pubsub
+from app.redis.subscriber import start_pubsub
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+
+# app = FastAPI()
 
 # creating a redis client
-redis_client = Redis(
-    host="localhost",
-    port=6379,
-    decode_responses=True
-    )
+# redis_client = Redis(
+#     host="localhost",
+#     port=6379,
+#     decode_responses=True
+#     )
 
 manager = ConnectionManager()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
 
-start_pubsub(redis_client,manager)
+    asyncio.create_task(
+        start_pubsub(manager)
+    )
+
+    yield
+
+app = FastAPI(
+    lifespan=lifespan
+)
 
 
 @app.post("/task")
@@ -106,12 +120,18 @@ async def websocket_endpoint(websocket: WebSocket,username:str):
     await manager.connect(websocket,username)
 
     try:
-        await manager.broadcast(f"{username} joined chat")
+        # await manager.broadcast(f"{username} joined chat")
+        
+        await redis_client.publish(
+            "chat_room",
+             f"{username} joined chat"
+        )
 
         while True:
 
             data = await websocket.receive_text()
-            redis_client.publish(
+            print("Publishing:", data)
+            await redis_client.publish(
                 "chat_room",
                 f"{username} : {data}"
             )
@@ -121,6 +141,10 @@ async def websocket_endpoint(websocket: WebSocket,username:str):
     except WebSocketDisconnect:
 
         manager.disconnect(websocket)
+        await redis_client.publish(
+            "chat_room",
+            f"{username} left chat"
+        )
 
-        await manager.broadcast(f"{username} left chat")
+        # await manager.broadcast(f"{username} left chat")
     
