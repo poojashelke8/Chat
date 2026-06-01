@@ -1,0 +1,70 @@
+# Virtual Environment
+venv/
+.env/
+.venv/
+
+# Environment Variables
+.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# SQLite
+*.db
+*.sqlite3
+
+# FastAPI
+.fastapi/
+
+# Alembic (optional)
+alembic/versions/*.pyc
+
+# Redis Dump Files
+dump.rdb
+
+# Uploaded Files
+uploads/
+media/
+
+# Temporary Files
+tmp/
+temp/
+
+# Coverage
+.coverage.*
+.cache
+
+# Python Environment Files
+.python-version
