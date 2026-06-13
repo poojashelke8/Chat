@@ -6,7 +6,7 @@ import asyncio
 from src.message.Models import Message
 from src.redis.subscriber import subscribe_to_user
 from src.redis.publisher import publish_message,publish_room_message
-from src.message.Models import Message,RoomMember
+from src.message.Models import Message,Rooms_Msg
 
 
 socket_router = APIRouter()
@@ -60,9 +60,9 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
             elif message_type == "room":
                 room_id = payload["room_id"]
                 room_member = (
-                    db.query(RoomMember).filter(
-                        RoomMember.room_id == room_id,
-                        RoomMember.user_id == user_id
+                    db.query(Rooms_Msg).filter(
+                        Rooms_Msg.room_id == room_id,
+                        Rooms_Msg.user_id == user_id
                     )
                     .first()
                 )

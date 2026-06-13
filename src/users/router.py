@@ -25,3 +25,9 @@ def create_user(user_data:UserCreate,db:Session = Depends(get_db)):
     db.refresh(new_user)
 
     return new_user
+
+@user_router.get("/all_users")
+def get_members(db:Session=Depends(get_db)):
+    users = db.query(User).all()
+
+    return users

@@ -2,7 +2,7 @@ import json
 # from fastapi import Depends
 from sqlalchemy.orm import Session
 from src.redis.client import redis_client
-from src.message.Models import RoomMember
+from src.message.Models import RoomMember_Msg
 # from src.utils.db import get_db
 
 async def subscribe_to_user(user_id,websocket,db:Session):
@@ -11,7 +11,7 @@ async def subscribe_to_user(user_id,websocket,db:Session):
     channel = f"user_{user_id}"
 
     await pubsub.subscribe(channel)
-    rooms =( db.query(RoomMember).filter(RoomMember.user_id == user_id).all())
+    rooms =( db.query(RoomMember_Msg).filter(RoomMember_Msg.user_id == user_id).all())
 
     for room in rooms:
         await pubsub.subscribe(f"room_{room.room_id}")

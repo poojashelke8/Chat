@@ -12,17 +12,17 @@ class Message(Base):
     content = Column(Text)
     created_at = Column(DateTime, server_default=func.now())
 
-class Rooms(Base):
-    __tablename__ = "rooms"
+class Rooms_Msg(Base):
+    __tablename__ = "rooms_msg"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     created_by = Column(Integer)
     created_at = Column(DateTime, server_default=func.now())
 
-class RoomMember(Base):
-    __tablename__ = "room_members"
+class RoomMember_Msg(Base):
+    __tablename__ = "room_members_msg"
 
     id = Column(Integer,primary_key=True)
-    room_id = Column(Integer, ForeignKey("rooms.id"))
+    room_id = Column(Integer, ForeignKey("rooms_msg.id"))
     user_id = Column(Integer, ForeignKey("users.id"))

@@ -2,7 +2,7 @@ from fastapi import Depends,HTTPException,APIRouter
 from sqlalchemy.orm import Session
 from src.rooms.Schema import RoomCreate,MemberAdd
 from src.utils.db import get_db
-from src.message.Models import Rooms,RoomMember
+from src.message.Models import Rooms_Msg,RoomMember_Msg
 
 
 
@@ -14,7 +14,7 @@ room_router = APIRouter(
 
 @room_router.post("/create_room")
 def create_room(room_data:RoomCreate,db:Session=Depends(get_db)):
-    new_room = Rooms(name = room_data.room_name,created_by = room_data.created_by)
+    new_room = Rooms_Msg(name = room_data.room_name,created_by = room_data.created_by)
 
     db.add(new_room)
     db.commit()
@@ -23,12 +23,12 @@ def create_room(room_data:RoomCreate,db:Session=Depends(get_db)):
 
 @room_router.post("/add_member")
 def add_member(room_id:int,member:MemberAdd,db:Session=Depends(get_db)):
-    room = db.query(Rooms).filter(Rooms.id == room_id).first()
+    room = db.query(Rooms_Msg).filter(Rooms_Msg.id == room_id).first()
 
     if not room:
         return HTTPException(status_code=404, detail="Room not found")
 
-    room_member = RoomMember(room_id=room_id,user_id = member.user_id)
+    room_member = RoomMember_Msg(room_id=room_id,user_id = member.user_id)
 
     db.add(room_member)
     db.commit()
@@ -41,7 +41,7 @@ def add_member(room_id:int,member:MemberAdd,db:Session=Depends(get_db)):
 
 @room_router.get("/all_members")
 def get_members(db:Session=Depends(get_db)):
-    members = db.query(RoomMember).all()
+    members = db.query(RoomMember_Msg).all()
 
     return members
 
@@ -51,8 +51,8 @@ def get_members(
     db: Session = Depends(get_db)
 ):
     members = (
-        db.query(RoomMember)
-        .filter(RoomMember.room_id == room_id)
+        db.query(RoomMember_Msg)
+        .filter(RoomMember_Msg.room_id == room_id)
         .all()
     )
 
