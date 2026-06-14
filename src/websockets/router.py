@@ -95,3 +95,6 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
     except WebSocketDisconnect:
         active_connections.pop(user_id, None)
         print(f"User {user_id} disconnected") 
+    finally:
+        subscriber_task.cancel()  # ← stop the subscriber
+        db.close()
